@@ -1,0 +1,153 @@
+########################## Metricbeat Configuration ###########################
+# You can find the full configuration reference here:
+# https://www.elastic.co/guide/en/beats/metricbeat/index.html
+
+#============================  Config Reloading ===============================
+# Config reloading allows to dynamically load modules. Each file which is
+# monitored must contain one or multiple modules as a list.
+metricbeat.config.modules:
+  # Glob pattern for configuration reloading
+  path: ${path.config}/modules.d/*.yml
+  # Period on which files under path should be checked for changes
+  reload.period: 10s
+  # Set to true to enable config reloading
+  reload.enabled: false
+
+# Maximum amount of time to randomly delay the start of a metricset. Use 0 to
+# disable startup delay.
+metricbeat.max_start_delay: 10s
+
+#============================== Autodiscover ===================================
+# Autodiscover allows you to detect changes in the system and spawn new modules
+# as they happen.
+metricbeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+
+##==========================  Modules configuration =============================
+#metricbeat.modules:
+#  #-------------------------------- Docker Module --------------------------------
+#  - module: docker
+#    metricsets:
+#      - "container"
+#      - "cpu"
+#      - "diskio"
+#      - "healthcheck"
+#      - "info"
+#      - "memory"
+#      - "network"
+#    hosts: ["unix:///var/run/docker.sock"]
+#    period: 10s
+#    enabled: true
+#    # If set to true, collects metrics per core.
+#    cpu.cores: true
+#
+#  #---------------------------- Elasticsearch Module ----------------------------
+#  - module: elasticsearch
+#    metricsets:
+#      - node
+#      - node_stats
+#    period: 10s
+#    hosts: [ "http://elasticsearch-demo:9200" ]
+#
+#    # Set to true to send data collected by module to X-Pack
+#    # Monitoring instead of metricbeat-* indices.
+#    xpack.enabled: true
+#
+#  #-------------------------------- Kibana Module --------------------------------
+#  - module: kibana
+#    metricsets: [ "status" ]
+#    period: 10s
+#    hosts: [ "kibana-demo:5601" ]
+#    basepath: ""
+#    enabled: true
+#
+#    # Set to true to send data collected by module to X-Pack
+#    # Monitoring instead of metricbeat-* indices.
+#    xpack.enabled: true
+#
+#  #------------------------------- Logstash Module -------------------------------
+##  - module: logstash
+##    metricsets: [ "node", "node_stats" ]
+##    enabled: true
+##    period: 10s
+##    hosts: [ "logstash-demo:9600" ]
+
+# ================================= Processors =================================
+# Processors are used to reduce the number of fields in the exported event or to
+# enhance the event with external metadata. This section defines a list of
+# processors that are applied one by one and the first one receives the initial
+# event:
+#
+#   event -> filter1 -> event1 -> filter2 ->event2 ...
+#
+# The supported processors are drop_fields, drop_event, include_fields,
+# decode_json_fields, and add_cloud_metadata.
+processors:
+  # The following example enriches each event with docker metadata, it matches
+  # container id from log path available in `source` field (by default it expects
+  # it to be /var/lib/docker/containers/*/*.log).
+  - add_docker_metadata: ~
+  # The following example enriches each event with host metadata.
+  - add_host_metadata: ~
+  # The following example enriches each event with process metadata using
+  # process IDs included in the event.
+  - add_process_metadata: ~
+
+# ================================== Outputs ===================================
+# Configure what output to use when sending the data collected by the beat.
+# ---------------------------- Elasticsearch Output ----------------------------
+output.elasticsearch:
+  # Boolean flag to enable or disable the output module.
+  enabled: true
+  # Array of hosts to connect to.
+  # Scheme and port can be left out and will be set to the default (http and 9200)
+  # In case you specify and additional path, the scheme is required: http://localhost:9200/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:9200
+  hosts: ['elasticsearch-demo:9200']
+
+# ================================= Dashboards =================================
+# These settings control loading the sample dashboards to the Kibana index. Loading
+# the dashboards are disabled by default and can be enabled either by setting the
+# options here, or by using the `-setup` CLI flag or the `setup` command.
+setup.dashboards.enabled: true
+
+# =================================== Kibana ===================================
+# Starting with Beats version 6.0.0, the dashboards are loaded via the Kibana API.
+# This requires a Kibana endpoint configuration.
+setup.kibana:
+  # Kibana Host
+  # Scheme and port can be left out and will be set to the default (http and 5601)
+  # In case you specify and additional path, the scheme is required: http://localhost:5601/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:5601
+  host: "kibana-demo:5601"
+
+# ================================== Logging ===================================
+# There are four options for the log output: file, stderr, syslog, eventlog
+# The file output is the default.
+# Sets log level. The default log level is info.
+# Available log levels are: error, warning, info, debug
+logging.level: info
+
+# ============================= X-Pack Monitoring ==============================
+# Metricbeat can export internal metrics to a central Elasticsearch monitoring
+# cluster.  This requires xpack monitoring to be enabled in Elasticsearch.  The
+# reporting is disabled by default.
+
+# Set to true to enable the monitoring reporter.
+monitoring.enabled: true
+
+# Uncomment to send the metrics to Elasticsearch. Most settings from the
+# Elasticsearch output are accepted here as well.
+# Note that the settings should point to your Elasticsearch *monitoring* cluster.
+# Any setting that is not set is automatically inherited from the Elasticsearch
+# output configuration, so if you have the Elasticsearch output configured such
+# that it is pointing to your Elasticsearch monitoring cluster, you can simply
+# uncomment the following line.
+monitoring.elasticsearch:
+  # Array of hosts to connect to.
+  # Scheme and port can be left out and will be set to the default (http and 9200)
+  # In case you specify and additional path, the scheme is required: http://localhost:9200/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:9200
+  #hosts: ["elasticsearch-demo:9200"]

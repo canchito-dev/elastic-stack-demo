@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  metricbeat-demo:
+    hostname: metricbeat-demo
+    container_name: metricbeat-demo
+    build:
+      context: ./metricbeat
+      dockerfile: Dockerfile
+      args:
+        - ELK_VERSION=${ELK_VERSION}
+    # Need to override user so we can access the log files, and docker.sock
+    user: root
+    volumes:
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - data_metricbeat_demo:/usr/share/metricbeat/data
+    # disable strict permission checks
+    command: [ '-e', '-v', '--strict.perms=false', '-system.hostfs=/hostfs' ]
+    networks:
+      - elastic-stack-service-network
+
+# Networks to be created to facilitate communication between containers
+networks:
+  elastic-stack-service-network:
+    driver: bridge
+
+# Volumes
+volumes:
+  data_metricbeat_demo:
+    driver: local
