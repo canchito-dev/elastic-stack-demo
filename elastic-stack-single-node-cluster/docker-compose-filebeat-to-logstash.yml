@@ -1,0 +1,28 @@
+version: '3.9'
+services:
+  filebeat-to-logstash-demo:
+    hostname: filebeat-to-logstash-demo
+    container_name: filebeat-to-logstash-demo
+    build:
+      context: ./filebeat
+      dockerfile: Dockerfile
+      args:
+        - ELK_VERSION=${ELK_VERSION}
+        - FILEBEAT_CONFIG=filebeat-to-logstash
+    # Need to override user so we can access the log files, and docker.sock
+    user: root
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # This is needed for filebeat to load container log path as specified in filebeat.yml
+      - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
+      # This is needed for filebeat to load logs for system and auth modules
+      - /var/log/:/var/log/:ro
+    # disable strict permission checks
+    command: [ '-e', '-v', '--strict.perms=false' ]
+    networks:
+      - elastic-stack-service-network
+
+# Networks to be created to facilitate communication between containers
+networks:
+  elastic-stack-service-network:
+    driver: bridge
