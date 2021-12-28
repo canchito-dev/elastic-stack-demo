@@ -1,0 +1,35 @@
+# A human-readable display name that identifies this Kibana instance. Default: "your-hostname"
+server.name: "kibana-single-node"
+
+# This setting specifies the host of the back end server. To allow remote users to connect, set
+# the value to the IP address or DNS name of the Kibana server. Default: "localhost"
+server.host: "0.0.0.0"
+
+# Sets the grace period for Kibana to attempt to resolve any ongoing HTTP requests after receiving
+# a SIGTERM/SIGINT signal, and before shutting down. Any new HTTP requests received during this
+# period are rejected with a 503 response. Default: 30s
+server.shutdownTimeout: "5s"
+
+# Kibana is served by a back end server. This setting specifies the port to use. Default: 5601
+server.port: 5601
+
+# The URLs of the Elasticsearch instances to use for all your queries. All nodes listed here must
+# be on the same cluster. Default: [ "http://localhost:9200" ]
+elasticsearch.hosts: [ "http://elasticsearch-demo:9200" ]
+
+# For Elasticsearch clusters that are running in containers, this setting changes the Node Listing
+# to display the CPU utilization based on the reported Cgroup statistics. It also adds the calculated
+# Cgroup CPU utilization to the Node Overview page instead of the overall operating system’s CPU
+# utilization. Defaults to false.
+monitoring.ui.container.elasticsearch.enabled: true
+
+# For Logstash nodes that are running in containers, this setting changes the Logstash Node Listing
+# to display the CPU utilization based on the reported Cgroup statistics. It also adds the calculated
+# Cgroup CPU utilization to the Logstash node detail pages instead of the overall operating system’s
+# CPU utilization. Defaults to false.
+monitoring.ui.container.logstash.enabled: true
+
+# Blocks Kibana access to any browser that does not enforce even rudimentary CSP rules. In practice,
+# this disables support for older, less safe browsers like Internet Explorer. For more information,
+# refer to Content Security Policy. Default: true
+csp.strict: true

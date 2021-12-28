@@ -1,0 +1,52 @@
+version: '3.9'
+services:
+  elasticsearch-demo:
+    hostname: elasticsearch-demo
+    container_name: elasticsearch-demo
+    build:
+      context: ./elasticsearch
+      dockerfile: Dockerfile-single-node
+      args:
+        - ELK_VERSION=${ELK_VERSION}
+    ports:
+      - 9300:9300
+      - 9200:9200
+    volumes:
+      - data_es_demo:/usr/share/elasticsearch/data:rw
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    labels:
+      co.elastic.logs/module: elasticsearch
+      co.elastic.metrics/module: elasticsearch
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - elastic-stack-service-network
+
+  kibana-demo:
+    hostname: kibana-demo
+    container_name: kibana-demo
+    build:
+      context: ./kibana
+      dockerfile: Dockerfile-single-node
+      args:
+        - ELK_VERSION=${ELK_VERSION}
+    ports:
+      - 5601:5601
+    labels:
+      co.elastic.logs/module: kibana
+      co.elastic.metrics/module: kibana
+    networks:
+      - elastic-stack-service-network
+
+# Networks to be created to facilitate communication between containers
+networks:
+  elastic-stack-service-network:
+    driver: bridge
+
+# Volumes
+volumes:
+  data_es_demo:
+    driver: local

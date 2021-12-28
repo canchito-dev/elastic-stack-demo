@@ -1,0 +1,5 @@
+ARG ELK_VERSION
+FROM docker.elastic.co/kibana/kibana:${ELK_VERSION}
+
+# add custom configuration
+ADD --chown=kibana:root kibana-single-node.yml /usr/share/kibana/config/kibana.yml

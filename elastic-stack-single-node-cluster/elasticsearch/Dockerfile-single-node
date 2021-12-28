@@ -1,0 +1,5 @@
+ARG ELK_VERSION
+FROM docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
+
+# add custom configuration
+ADD --chown=elasticsearch:root elasticsearch-single-node.yml /usr/share/elasticsearch/config/elasticsearch.yml

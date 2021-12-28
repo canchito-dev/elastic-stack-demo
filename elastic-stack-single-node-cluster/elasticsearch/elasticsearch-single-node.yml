@@ -1,0 +1,44 @@
+# ---------------------------------- Cluster -----------------------------------
+# Cluster name identifies your cluster for auto-discovery. If you're running
+# multiple clusters on the same network, make sure you're using unique names.
+cluster.name: elastic-stack-single-node-cluster
+
+# Specifies whether Elasticsearch should form a multiple-node cluster. By default,
+# Elasticsearch discovers other nodes when forming a cluster and allows other nodes
+# to join the cluster later. If discovery.type is set to single-node, Elasticsearch
+# forms a single-node cluster and suppresses the timeout set by cluster.publish.timeout.
+discovery.type: single-node
+
+# ---------------------------------- Network -----------------------------------
+# Sets the address of this node for both HTTP and transport traffic. The node will
+# bind to this address and will also use it as its publish address. Accepts an IP
+# address, a hostname, or a special value.
+network.host: 0.0.0.0
+
+# ------------------------------------ Node ------------------------------------
+# Node names are generated dynamically on startup, so you're relieved
+# from configuring them manually. You can tie this node to a specific name:
+node.name: "elasticsearch-demo-single-node"
+
+# ----------------------------------- Memory -----------------------------------
+# Lock the memory on startup
+bootstrap.memory_lock: true
+
+# ----------------------------------- License -----------------------------------
+# Set to basic (default) to enable basic X-Pack features. If set to trial, the
+# self-generated license gives access only to all the features of a x-pack for 30
+# days. You can later downgrade the cluster to a basic license if needed.
+xpack.license.self_generated.type: trial
+
+# -----------------------------------  Monitoring -----------------------------------
+# Set to true to enable the collection of monitoring data. When this setting is false
+# (default), Elasticsearch monitoring data is not collected and all monitoring data from
+# other sources such as Kibana, Beats, and Logstash is ignored.
+xpack.monitoring.collection.enabled: true
+
+# Controls whether statistics about your Elasticsearch cluster should be collected.
+# Defaults to true. This is different from xpack.monitoring.collection.enabled, which
+# allows you to enable or disable all monitoring collection. However, this setting simply
+# disables the collection of Elasticsearch data while still allowing other data (e.g.,
+# Kibana, Logstash, Beats, or APM Server monitoring data) to pass through this cluster.
+xpack.monitoring.elasticsearch.collection.enabled: true
