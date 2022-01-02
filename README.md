@@ -5,7 +5,9 @@
 
 Hello friends! Here are a few examples on how to deploy Elastic Stack using docker. It is part of a series in which by 
 using examples, we deploy a series of Beats, Logstash, Elasticsearch and Kibana in a dockerized environment. Hope you
-enjoy it.
+enjoy it. The below image, is a representation of the final architecture.
+
+![Elastic Stack Architecture in Docker](images/docker_elastic_stack_architecture.png)
 
 * [Introduction to Elastic Stack](https://www.canchito-dev.com/public/blog/2021/12/26/introduction-to-elastic-stack/).
 * [Deploying Elastic Stack Cluster (single node) in docker](https://www.canchito-dev.com/public/blog/2021/12/26/deploying-elastic-stack-cluster-single-node-in-docker/).
