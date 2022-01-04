@@ -2,40 +2,6 @@
 # You can find the full configuration reference here:
 # https://www.elastic.co/guide/en/beats/filebeat/index.html
 
-##==========================  Modules configuration =============================
-#filebeat.modules:
-##---------------------------- Elasticsearch Module ----------------------------
-#- module: elasticsearch
-#  # Server log
-#  server:
-#    enabled: true
-#  gc:
-#    enabled: true
-#  audit:
-#    enabled: true
-#  slowlog:
-#    enabled: true
-#  deprecation:
-#    enabled: true
-#
-##-------------------------------- Kibana Module --------------------------------
-#- module: kibana
-#  # Server logs
-#  log:
-#    enabled: true
-#  # Audit logs
-#  audit:
-#    enabled: true
-#
-##------------------------------- Logstash Module -------------------------------
-##- module: logstash
-#  # logs
-#  #log:
-#    #enabled: true
-#  # Slow logs
-#  #slowlog:
-#    #enabled: true
-
 # ========================== Filebeat global options ===========================
 # Enable filebeat config reloading
 filebeat.config:
