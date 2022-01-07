@@ -1,0 +1,22 @@
+version: '3.9'
+services:
+  heartbeat-demo:
+    hostname: heartbeat-demo
+    container_name: heartbeat-demo
+    build:
+      context: ./heartbeat
+      dockerfile: Dockerfile
+      args:
+        - ELK_VERSION=${ELK_VERSION}
+    ports:
+      - 5466:5066
+    user: heartbeat
+    # disable strict permission checks
+    command: [ '-e', '-v', '--strict.perms=false' ]
+    networks:
+      - elastic-stack-service-network
+
+# Networks to be created to facilitate communication between containers
+networks:
+  elastic-stack-service-network:
+    name: elastic-stack-service-network

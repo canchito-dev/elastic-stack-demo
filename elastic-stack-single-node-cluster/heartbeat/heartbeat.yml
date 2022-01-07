@@ -1,0 +1,205 @@
+################### Heartbeat Configuration Example #########################
+# You can find the full configuration reference here:
+# https://www.elastic.co/guide/en/beats/heartbeat/index.html
+
+############################# Heartbeat ######################################
+# Define a directory to load monitor definitions from. Definitions take the form
+# of individual yaml files.
+heartbeat.config.monitors:
+  # Directory + glob pattern to search for configuration files
+  path: ${path.config}/monitors.d/*.yml
+  # If enabled, heartbeat will periodically check the config.monitors path for changes
+  reload.enabled: false
+  # How often to check for changes
+  reload.period: 5s
+
+# Configure monitors
+heartbeat.monitors:
+  # monitor type `http`. Connect via HTTP an optionally verify response
+  - type: http
+    # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+    id: docker-http-monitor
+    # Human readable display name for this service in Uptime UI and elsewhere
+    name: Docker HTTP Monitor
+    # Enable/Disable monitor
+    enabled: true
+    # Configure task schedule
+    schedule: '@every 5s' # every 5 seconds from start of beat
+    # Configure URLs to ping
+    urls:
+      - http://elasticsearch-demo:9200
+      - http://kibana-demo:5601
+    # Configure IP protocol types to ping on if hostnames are configured.
+    # Ping all resolvable IPs if `mode` is `all`, or only one IP if `mode` is `any`.
+    ipv4: true
+    ipv6: true
+    mode: any
+
+  # monitor type `icmp` (requires root) uses ICMP Echo Request to ping
+  # configured hosts
+  - type: icmp
+    # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+    id: docker-icmp-monitor
+    # Human readable display name for this service in Uptime UI and elsewhere
+    name: Docker ICMP Monitor
+    # Name of corresponding APM service, if Elastic APM is in use for the monitored service.
+    # service.name: my-apm-service-name
+    # Enable/Disable monitor
+    enabled: true
+    # Configure task schedule using cron-like syntax
+    schedule: '@every 5s'
+    hosts:
+      - elasticsearch-demo
+      - kibana-demo
+    # Configure IP protocol types to ping on if hostnames are configured.
+    # Ping all resolvable IPs if `mode` is `all`, or only one IP if `mode` is `any`.
+    ipv4: true
+    ipv6: true
+    mode: any
+    # Total running time per ping test.
+    timeout: 16s
+    # Waiting duration until another ICMP Echo Request is emitted.
+    wait: 1s
+
+  # monitor type `tcp`. Connect via TCP and optionally verify endpoint
+  # by sending/receiving a custom payload
+  - type: tcp
+    # ID used to uniquely identify this monitor in elasticsearch even if the config changes
+    id: docker-tcp-monitor
+    # Human readable display name for this service in Uptime UI and elsewhere
+    name: Docker TCP Monitor
+    # Enable/Disable monitor
+    enabled: true
+    # Configure task schedule
+    schedule: '@every 5s' # every 5 seconds from start of beat
+    # configure hosts to ping.
+    # Entries can be:
+    #   - plain host name or IP like `localhost`:
+    #       Requires ports configs to be checked. If ssl is configured,
+    #       a SSL/TLS based connection will be established. Otherwise plain tcp connection
+    #       will be established
+    #   - hostname + port like `localhost:12345`:
+    #       Connect to port on given host. If ssl is configured,
+    #       a SSL/TLS based connection will be established. Otherwise plain tcp connection
+    #       will be established
+    #   - full url syntax. `scheme://<host>:[port]`. The `<scheme>` can be one of
+    #     `tcp`, `plain`, `ssl` and `tls`. If `tcp`, `plain` is configured, a plain
+    #     tcp connection will be established, even if ssl is configured.
+    #     Using `tls`/`ssl`, an SSL connection is established. If no ssl is configured,
+    #     system defaults will be used (not supported on windows).
+    #     If `port` is missing in url, the ports setting is required.
+    hosts: [ 'elasticsearch-demo:9200', 'kibana-demo:5601' ]
+    # Configure IP protocol types to ping on if hostnames are configured.
+    # Ping all resolvable IPs if `mode` is `all`, or only one IP if `mode` is `any`.
+    ipv4: true
+    ipv6: true
+    mode: any
+
+# ================================= Processors =================================
+# Processors are used to reduce the number of fields in the exported event or to
+# enhance the event with external metadata. This section defines a list of
+# processors that are applied one by one and the first one receives the initial
+# event:
+#
+#   event -> filter1 -> event1 -> filter2 ->event2 ...
+#
+# The supported processors are drop_fields, drop_event, include_fields,
+# decode_json_fields, and add_cloud_metadata.
+processors:
+  # The following example enriches each event with docker metadata, it matches
+  # container id from log path available in `source` field (by default it expects
+  # it to be /var/lib/docker/containers/*/*.log).
+  - add_docker_metadata: ~
+  # The following example enriches each event with host metadata.
+  - add_host_metadata: ~
+
+# ================================== Logging ===================================
+# There are four options for the log output: file, stderr, syslog, eventlog
+# The file output is the default.
+
+# Sets log level. The default log level is info.
+# Available log levels are: error, warning, info, debug
+logging.level: info
+# Send all logging output to syslog. The default is false.
+#logging.to_syslog: false
+# Send all logging output to Windows Event Logs. The default is false.
+#logging.to_eventlog: false
+
+# If enabled, Heartbeat periodically logs its internal metrics that have changed
+# in the last period. For each metric that changed, the delta from the value at
+# the beginning of the period is logged. Also, the total values for
+# all non-zero internal metrics are logged on shutdown. The default is true.
+logging.metrics.enabled: true
+# The period after which to log the internal metrics. The default is 30s.
+logging.metrics.period: 30s
+# Logging to rotating files. Set logging.to_files to false to disable logging to
+# files.
+logging.to_files: false
+
+# =================================== Kibana ===================================
+
+# Starting with Beats version 6.0.0, the dashboards are loaded via the Kibana API.
+# This requires a Kibana endpoint configuration.
+setup.kibana:
+  # Kibana Host
+  # Scheme and port can be left out and will be set to the default (http and 5601)
+  # In case you specify and additional path, the scheme is required: http://localhost:5601/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:5601
+  host: "kibana-demo:5601"
+
+# ================================= Dashboards =================================
+# These settings control loading the sample dashboards to the Kibana index. Loading
+# the dashboards are disabled by default and can be enabled either by setting the
+# options here, or by using the `-setup` CLI flag or the `setup` command.
+# *NOTE*: Starting from Heartbeat 7.0, Elastic team decided to remove Heartbeat
+# dashboard from 7.0 [#10294](https://github.com/elastic/beats/pull/10294)
+# In case you would like to import it manually you can find the dashboard here
+# [Uptime Contrib Repository](https://github.com/elastic/uptime-contrib)
+setup.dashboards.enabled: false
+
+# ================================== Outputs ===================================
+# Configure what output to use when sending the data collected by the beat.
+# ---------------------------- Elasticsearch Output ----------------------------
+output.elasticsearch:
+  # Boolean flag to enable or disable the output module.
+  enabled: true
+  # Array of hosts to connect to.
+  # Scheme and port can be left out and will be set to the default (http and 9200)
+  # In case you specify and additional path, the scheme is required: http://localhost:9200/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:9200
+  hosts: 'elasticsearch-demo:9200'
+
+# ============================= X-Pack Monitoring ==============================
+# Heartbeat can export internal metrics to a central Elasticsearch monitoring
+# cluster.  This requires xpack monitoring to be enabled in Elasticsearch.  The
+# reporting is disabled by default.
+# Set to true to enable the monitoring reporter.
+monitoring.enabled: true
+# Uncomment to send the metrics to Elasticsearch. Most settings from the
+# Elasticsearch output are accepted here as well.
+# Note that the settings should point to your Elasticsearch *monitoring* cluster.
+# Any setting that is not set is automatically inherited from the Elasticsearch
+# output configuration, so if you have the Elasticsearch output configured such
+# that it is pointing to your Elasticsearch monitoring cluster, you can simply
+# uncomment the following line.
+monitoring.elasticsearch:
+  # Array of hosts to connect to.
+  # Scheme and port can be left out and will be set to the default (http and 9200)
+  # In case you specify and additional path, the scheme is required: http://localhost:9200/path
+  # IPv6 addresses should always be defined as: https://[2001:db8::1]:9200
+  #hosts: ["elasticsearch-demo:9200"]
+
+# =============================== HTTP Endpoint ================================
+# Each beat can expose internal metrics through a HTTP endpoint. For security
+# reasons the endpoint is disabled by default. This feature is currently experimental.
+# Stats can be access through http://localhost:5066/stats . For pretty JSON output
+# append ?pretty to the URL.
+# Defines if the HTTP endpoint is enabled.
+http.enabled: true
+
+# The HTTP endpoint will bind to this hostname, IP address, unix socket or named pipe.
+# When using IP addresses, it is recommended to only use localhost.
+http.host: heartbeat-demo
+
+# Port on which the HTTP endpoint will bind. Default is 5066.
+http.port: 5066
