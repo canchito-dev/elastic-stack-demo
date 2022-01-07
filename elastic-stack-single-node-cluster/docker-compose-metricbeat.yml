@@ -8,6 +8,8 @@ services:
       dockerfile: Dockerfile
       args:
         - ELK_VERSION=${ELK_VERSION}
+    ports:
+      - 5366:5066
     # Need to override user so we can access the log files, and docker.sock
     user: root
     volumes:
@@ -24,7 +26,7 @@ services:
 # Networks to be created to facilitate communication between containers
 networks:
   elastic-stack-service-network:
-    driver: bridge
+    name: elastic-stack-service-network
 
 # Volumes
 volumes:
