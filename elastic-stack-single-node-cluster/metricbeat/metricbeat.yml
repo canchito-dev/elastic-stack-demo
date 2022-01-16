@@ -1,22 +1,78 @@
-######################## Filebeat Configuration ############################
+########################## Metricbeat Configuration ###########################
 # You can find the full configuration reference here:
-# https://www.elastic.co/guide/en/beats/filebeat/index.html
+# https://www.elastic.co/guide/en/beats/metricbeat/index.html
 
-# ========================== Filebeat global options ===========================
-# Enable filebeat config reloading
-filebeat.config:
-  modules:
-    path: ${path.config}/modules.d/*.yml
-    reload.enabled: false
+#============================  Config Reloading ===============================
+# Config reloading allows to dynamically load modules. Each file which is
+# monitored must contain one or multiple modules as a list.
+metricbeat.config.modules:
+  # Glob pattern for configuration reloading
+  path: ${path.config}/modules.d/*.yml
+  # Period on which files under path should be checked for changes
+  reload.period: 10s
+  # Set to true to enable config reloading
+  reload.enabled: false
 
-# =========================== Filebeat autodiscover ============================
+# Maximum amount of time to randomly delay the start of a metricset. Use 0 to
+# disable startup delay.
+metricbeat.max_start_delay: 10s
+
+#============================== Autodiscover ===================================
 # Autodiscover allows you to detect changes in the system and spawn new modules
-# or inputs as they happen.
-filebeat.autodiscover:
-  # List of enabled autodiscover providers
+# as they happen.
+metricbeat.autodiscover:
   providers:
     - type: docker
       hints.enabled: true
+
+##==========================  Modules configuration =============================
+#metricbeat.modules:
+#  #-------------------------------- Docker Module --------------------------------
+#  - module: docker
+#    metricsets:
+#      - "container"
+#      - "cpu"
+#      - "diskio"
+#      - "healthcheck"
+#      - "info"
+#      - "memory"
+#      - "network"
+#    hosts: ["unix:///var/run/docker.sock"]
+#    period: 10s
+#    enabled: true
+#    # If set to true, collects metrics per core.
+#    cpu.cores: true
+#
+#  #---------------------------- Elasticsearch Module ----------------------------
+#  - module: elasticsearch
+#    metricsets:
+#      - node
+#      - node_stats
+#    period: 10s
+#    hosts: [ "http://elasticsearch-demo:9200" ]
+#
+#    # Set to true to send data collected by module to X-Pack
+#    # Monitoring instead of metricbeat-* indices.
+#    xpack.enabled: true
+#
+#  #-------------------------------- Kibana Module --------------------------------
+#  - module: kibana
+#    metricsets: [ "status" ]
+#    period: 10s
+#    hosts: [ "kibana-demo:5601" ]
+#    basepath: ""
+#    enabled: true
+#
+#    # Set to true to send data collected by module to X-Pack
+#    # Monitoring instead of metricbeat-* indices.
+#    xpack.enabled: true
+#
+#  #------------------------------- Logstash Module -------------------------------
+##  - module: logstash
+##    metricsets: [ "node", "node_stats" ]
+##    enabled: true
+##    period: 10s
+##    hosts: [ "logstash-demo:9600" ]
 
 # ================================= Processors =================================
 # Processors are used to reduce the number of fields in the exported event or to
@@ -35,6 +91,9 @@ processors:
   - add_docker_metadata: ~
   # The following example enriches each event with host metadata.
   - add_host_metadata: ~
+  # The following example enriches each event with process metadata using
+  # process IDs included in the event.
+  - add_process_metadata: ~
 
 # ================================== Outputs ===================================
 # Configure what output to use when sending the data collected by the beat.
@@ -71,16 +130,8 @@ setup.kibana:
 # Available log levels are: error, warning, info, debug
 logging.level: info
 
-# Write Filebeat own logs only to file to avoid catching them with itself in docker log files
-# When true, writes all logging output to files. The log files are automatically rotated when the
-# log file size limit is reached.
-logging.to_files: false
-
-# When true, writes all logging output to the syslog. This option is not supported on Windows.
-logging.to_syslog: false
-
 # ============================= X-Pack Monitoring ==============================
-# Filebeat can export internal metrics to a central Elasticsearch monitoring
+# Metricbeat can export internal metrics to a central Elasticsearch monitoring
 # cluster.  This requires xpack monitoring to be enabled in Elasticsearch.  The
 # reporting is disabled by default.
 
@@ -111,7 +162,7 @@ http.enabled: true
 
 # The HTTP endpoint will bind to this hostname, IP address, unix socket or named pipe.
 # When using IP addresses, it is recommended to only use localhost.
-http.host: filebeat-to-elasticseach-demo
+http.host: metricbeat-demo
 
 # Port on which the HTTP endpoint will bind. Default is 5066.
 http.port: 5066

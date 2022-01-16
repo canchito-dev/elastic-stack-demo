@@ -33,3 +33,5 @@ monitoring.ui.container.logstash.enabled: true
 # this disables support for older, less safe browsers like Internet Explorer. For more information,
 # refer to Content Security Policy. Default: true
 csp.strict: true
+
+logging.verbose: true
