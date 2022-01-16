@@ -72,6 +72,14 @@ setup.kibana:
 # Available log levels are: error, warning, info, debug
 logging.level: info
 
+# Write Filebeat own logs only to file to avoid catching them with itself in docker log files
+# When true, writes all logging output to files. The log files are automatically rotated when the
+# log file size limit is reached.
+logging.to_files: true
+
+# When true, writes all logging output to the syslog. This option is not supported on Windows.
+logging.to_syslog: false
+
 # ============================= X-Pack Monitoring ==============================
 # Filebeat can export internal metrics to a central Elasticsearch monitoring
 # cluster.  This requires xpack monitoring to be enabled in Elasticsearch.  The
@@ -93,3 +101,18 @@ monitoring.elasticsearch:
   # In case you specify and additional path, the scheme is required: http://localhost:9200/path
   # IPv6 addresses should always be defined as: https://[2001:db8::1]:9200
   hosts: ['elasticsearch-demo:9200']
+
+# =============================== HTTP Endpoint ================================
+# Each beat can expose internal metrics through a HTTP endpoint. For security
+# reasons the endpoint is disabled by default. This feature is currently experimental.
+# Stats can be access through http://localhost:5066/stats . For pretty JSON output
+# append ?pretty to the URL.
+# Defines if the HTTP endpoint is enabled.
+http.enabled: true
+
+# The HTTP endpoint will bind to this hostname, IP address, unix socket or named pipe.
+# When using IP addresses, it is recommended to only use localhost.
+http.host: filebeat-to-logstash-demo
+
+# Port on which the HTTP endpoint will bind. Default is 5066.
+http.port: 5066

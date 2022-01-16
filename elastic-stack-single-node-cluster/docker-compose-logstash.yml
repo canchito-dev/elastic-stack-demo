@@ -5,6 +5,8 @@ services:
       context: logstash/
       args:
         - ELK_VERSION=${ELK_VERSION}
+    ports:
+      - 9600:9600
     hostname: logstash-demo
     container_name: logstash-demo
     logging:
@@ -23,4 +25,4 @@ services:
 # Networks to be created to facilitate communication between containers
 networks:
   elastic-stack-service-network:
-    driver: bridge
+    name: elastic-stack-service-network
