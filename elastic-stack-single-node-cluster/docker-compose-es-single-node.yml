@@ -44,7 +44,7 @@ services:
 # Networks to be created to facilitate communication between containers
 networks:
   elastic-stack-service-network:
-    driver: bridge
+    name: elastic-stack-service-network
 
 # Volumes
 volumes:
