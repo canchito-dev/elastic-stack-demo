@@ -74,6 +74,7 @@ KIBANA_URL=http://localhost:5601/api/status
 FILEBEAT_TO_ELASTICSEARCH_URL=http://localhost:5166/?pretty
 LOGSTASH_URL=http://localhost:9600/?pretty
 FILEBEAT_TO_LOGSTASH_URL=http://localhost:5266/?pretty
+METRICBEAT_URL=http://localhost:5366/?pretty
 
 echo "Starting Kibana and Elasticsearch"
 docker-compose -f docker-compose-es-single-node.yml up -d --build
@@ -121,3 +122,13 @@ retry $MAX_WAIT check_service_up $FILEBEAT_TO_LOGSTASH_URL || exit 1
 sleep 2 # give Filebeat to Logstash an extra moment to fully mature
 curl -s -f $FILEBEAT_TO_LOGSTASH_URL
 echo "Filebeat to Logstash has started!"
+
+echo "Starting Metricbeat"
+docker-compose -f docker-compose-metricbeat.yml up -d --build
+
+# Verify Metricbeat service has started
+echo "Waiting up to $MAX_WAIT seconds for Metricbeat to start"
+retry $MAX_WAIT check_service_up $METRICBEAT_URL || exit 1
+sleep 2 # give Metricbeat an extra moment to fully mature
+curl -s -f $METRICBEAT_URL
+echo "Metricbeat has started!"

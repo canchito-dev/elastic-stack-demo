@@ -5,6 +5,10 @@ services:
       context: logstash/
       args:
         - ELK_VERSION=${ELK_VERSION}
+      labels:
+        co.elastic.logs/module: "logstash"
+        co.elastic.metrics/module: "logstash"
+        co.elastic.metrics/hosts: "$${data.host}:$${data.port}"
     ports:
       - 9600:9600
     hostname: logstash-demo
@@ -16,9 +20,6 @@ services:
         max-file: "10"
     environment:
       - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
-    labels:
-      co.elastic.logs/module: logstash
-      co.elastic.metrics/module: logstash
     networks:
       - elastic-stack-service-network
 
