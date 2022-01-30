@@ -13,3 +13,5 @@ enjoy it. The below image, is a representation of the final architecture.
 * [Deploying Elastic Stack Cluster (single node) in docker](https://www.canchito-dev.com/public/blog/2021/12/26/deploying-elastic-stack-cluster-single-node-in-docker/).
 * [Introduction to Elastic Stack Beats](http://www.canchito-dev.com/public/blog/2022/01/02/elastic-stack-beats/)
 * [Deploying Filebeat in docker](http://www.canchito-dev.com/public/blog/2021/12/31/deploying-filebeat-in-docker/)
+* [Getting Started with Logstash](http://www.canchito-dev.com/public/blog/2022/01/16/getting-started-with-logstash/)
+* [Collect Metrics with Metricbet](https://www.canchito-dev.com/public/blog/2022/01/25/collect-metrics-with-metricbet/)

@@ -38,15 +38,16 @@ processors:
 
 # ================================== Outputs ===================================
 # Configure what output to use when sending the data collected by the beat.
-# ---------------------------- Elasticsearch Output ----------------------------
-output.elasticsearch:
+# ------------------------------ Logstash Output -------------------------------
+output.logstash:
   # Boolean flag to enable or disable the output module.
   enabled: true
-  # Array of hosts to connect to.
-  # Scheme and port can be left out and will be set to the default (http and 9200)
-  # In case you specify and additional path, the scheme is required: http://localhost:9200/path
-  # IPv6 addresses should always be defined as: https://[2001:db8::1]:9200
-  hosts: ['elasticsearch-demo:9200']
+
+  # The Logstash hosts
+  hosts: ["logstash-demo:5044"]
+
+  # Optionally load-balance events between Logstash hosts. Default is false.
+  #loadbalance: false
 
 # ================================= Dashboards =================================
 # These settings control loading the sample dashboards to the Kibana index. Loading
@@ -74,7 +75,7 @@ logging.level: info
 # Write Filebeat own logs only to file to avoid catching them with itself in docker log files
 # When true, writes all logging output to files. The log files are automatically rotated when the
 # log file size limit is reached.
-logging.to_files: false
+logging.to_files: true
 
 # When true, writes all logging output to the syslog. This option is not supported on Windows.
 logging.to_syslog: false
@@ -99,7 +100,7 @@ monitoring.elasticsearch:
   # Scheme and port can be left out and will be set to the default (http and 9200)
   # In case you specify and additional path, the scheme is required: http://localhost:9200/path
   # IPv6 addresses should always be defined as: https://[2001:db8::1]:9200
-  #hosts: ["elasticsearch-demo:9200"]
+  hosts: ['elasticsearch-demo:9200']
 
 # =============================== HTTP Endpoint ================================
 # Each beat can expose internal metrics through a HTTP endpoint. For security
@@ -111,7 +112,7 @@ http.enabled: true
 
 # The HTTP endpoint will bind to this hostname, IP address, unix socket or named pipe.
 # When using IP addresses, it is recommended to only use localhost.
-http.host: filebeat-to-elasticseach-demo
+http.host: filebeat-to-logstash-demo
 
 # Port on which the HTTP endpoint will bind. Default is 5066.
 http.port: 5066

@@ -8,23 +8,30 @@ services:
       dockerfile: Dockerfile
       args:
         - ELK_VERSION=${ELK_VERSION}
+    ports:
+      - 5366:5066
     # Need to override user so we can access the log files, and docker.sock
     user: root
+    cap_add:
+      - SYS_PTRACE
+      - DAC_READ_SEARCH
     volumes:
       - /proc:/hostfs/proc:ro
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
       - /:/hostfs:ro
       - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro
       - data_metricbeat_demo:/usr/share/metricbeat/data
     # disable strict permission checks
     command: [ '-e', '-v', '--strict.perms=false', '-system.hostfs=/hostfs' ]
+    #network_mode: host # Mandatory to monitor HOST filesystem, memory, processes,...
     networks:
       - elastic-stack-service-network
 
 # Networks to be created to facilitate communication between containers
 networks:
   elastic-stack-service-network:
-    driver: bridge
+    name: elastic-stack-service-network
 
 # Volumes
 volumes:

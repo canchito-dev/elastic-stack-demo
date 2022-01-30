@@ -1,16 +1,16 @@
 version: '3.9'
 services:
-  filebeat-to-elasticseach-demo:
-    hostname: filebeat-to-elasticseach-demo
-    container_name: filebeat-to-elasticseach-demo
+  filebeat-to-logstash-demo:
+    hostname: filebeat-to-logstash-demo
+    container_name: filebeat-to-logstash-demo
     build:
       context: ./filebeat
       dockerfile: Dockerfile
       args:
         - ELK_VERSION=${ELK_VERSION}
-        - FILEBEAT_CONFIG=filebeat-to-elasticseach
+        - FILEBEAT_CONFIG=filebeat-to-logstash
     ports:
-      - 5166:5066
+      - 5266:5066
     # Need to override user so we can access the log files, and docker.sock
     user: root
     volumes:

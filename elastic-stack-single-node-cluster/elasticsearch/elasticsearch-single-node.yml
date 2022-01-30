@@ -42,3 +42,11 @@ xpack.monitoring.collection.enabled: true
 # disables the collection of Elasticsearch data while still allowing other data (e.g.,
 # Kibana, Logstash, Beats, or APM Server monitoring data) to pass through this cluster.
 xpack.monitoring.elasticsearch.collection.enabled: true
+
+# ----------------------------------- Minimal Security -----------------------------------
+# Set to true to enable Elasticsearch security features on the node. If set to false, which
+# is the default value for basic and trial licenses, security features are disabled. It also
+# affects all Kibana instances that connect to this Elasticsearch instance; you do not need
+# to disable security features in those kibana.yml files. For more information about disabling
+# security features in specific Kibana instances, see Kibana security settings.
+xpack.security.enabled: false

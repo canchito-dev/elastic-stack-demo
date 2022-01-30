@@ -1,0 +1,29 @@
+version: '3.9'
+services:
+  logstash-demo:
+    build:
+      context: logstash/
+      args:
+        - ELK_VERSION=${ELK_VERSION}
+      labels:
+        co.elastic.logs/module: "logstash"
+        co.elastic.metrics/module: "logstash"
+        co.elastic.metrics/hosts: "$${data.host}:$${data.port}"
+    ports:
+      - 9600:9600
+    hostname: logstash-demo
+    container_name: logstash-demo
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10k"
+        max-file: "10"
+    environment:
+      - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
+    networks:
+      - elastic-stack-service-network
+
+# Networks to be created to facilitate communication between containers
+networks:
+  elastic-stack-service-network:
+    name: elastic-stack-service-network
