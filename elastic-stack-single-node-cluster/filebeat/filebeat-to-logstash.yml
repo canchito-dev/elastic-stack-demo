@@ -44,7 +44,7 @@ output.logstash:
   enabled: true
 
   # The Logstash hosts
-  hosts: ["logstash-ctl-elk:5044"]
+  hosts: ["logstash-demo:5044"]
 
   # Optionally load-balance events between Logstash hosts. Default is false.
   #loadbalance: false
@@ -63,7 +63,7 @@ setup.kibana:
   # Scheme and port can be left out and will be set to the default (http and 5601)
   # In case you specify and additional path, the scheme is required: http://localhost:5601/path
   # IPv6 addresses should always be defined as: https://[2001:db8::1]:5601
-  host: "kibana-ctl-elk:5601"
+  host: "kibana-demo:5601"
 
 # ================================== Logging ===================================
 # There are four options for the log output: file, stderr, syslog, eventlog
@@ -100,7 +100,7 @@ monitoring.elasticsearch:
   # Scheme and port can be left out and will be set to the default (http and 9200)
   # In case you specify and additional path, the scheme is required: http://localhost:9200/path
   # IPv6 addresses should always be defined as: https://[2001:db8::1]:9200
-  hosts: ['elasticsearch-ctl-elk:9200']
+  hosts: ['elasticsearch-demo:9200']
 
 # =============================== HTTP Endpoint ================================
 # Each beat can expose internal metrics through a HTTP endpoint. For security
@@ -112,7 +112,7 @@ http.enabled: true
 
 # The HTTP endpoint will bind to this hostname, IP address, unix socket or named pipe.
 # When using IP addresses, it is recommended to only use localhost.
-http.host: filebeat-to-logstash-ctl-elk
+http.host: filebeat-to-logstash-demo
 
 # Port on which the HTTP endpoint will bind. Default is 5066.
 http.port: 5066

@@ -74,7 +74,7 @@ logging.level: info
 # Write Filebeat own logs only to file to avoid catching them with itself in docker log files
 # When true, writes all logging output to files. The log files are automatically rotated when the
 # log file size limit is reached.
-logging.to_files: true
+logging.to_files: false
 
 # When true, writes all logging output to the syslog. This option is not supported on Windows.
 logging.to_syslog: false
@@ -111,7 +111,7 @@ http.enabled: true
 
 # The HTTP endpoint will bind to this hostname, IP address, unix socket or named pipe.
 # When using IP addresses, it is recommended to only use localhost.
-http.host: filebeat-to-logstash-ctl-elk
+http.host: filebeat-to-elasticseach-demo
 
 # Port on which the HTTP endpoint will bind. Default is 5066.
 http.port: 5066

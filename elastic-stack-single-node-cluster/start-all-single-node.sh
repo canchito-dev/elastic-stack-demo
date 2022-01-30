@@ -79,7 +79,7 @@ HEARTBEAT_URL=http://localhost:5466/?pretty
 PACKETBEAT_URL=http://localhost:5066/?pretty
 
 echo "Starting Kibana and Elasticsearch"
-docker-compose -f docker-compose-elk-single-node.yml up -d --build
+docker-compose -f docker-compose-es-single-node.yml up -d --build
 
 # Verify Elasticsearch service has started
 echo "Waiting up to $MAX_WAIT seconds for Elasticsearch to start"
