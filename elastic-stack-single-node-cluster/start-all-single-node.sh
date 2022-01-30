@@ -75,6 +75,7 @@ FILEBEAT_TO_ELASTICSEARCH_URL=http://localhost:5166/?pretty
 LOGSTASH_URL=http://localhost:9600/?pretty
 FILEBEAT_TO_LOGSTASH_URL=http://localhost:5266/?pretty
 METRICBEAT_URL=http://localhost:5366/?pretty
+HEARTBEAT_URL=http://localhost:5466/?pretty
 
 echo "Starting Kibana and Elasticsearch"
 docker-compose -f docker-compose-es-single-node.yml up -d --build
@@ -132,3 +133,18 @@ retry $MAX_WAIT check_service_up $METRICBEAT_URL || exit 1
 sleep 2 # give Metricbeat an extra moment to fully mature
 curl -s -f $METRICBEAT_URL
 echo "Metricbeat has started!"
+
+echo "Starting Heartbeat"
+docker-compose -f docker-compose-heartbeat.yml up -d --build
+
+# Verify Heartbeat service has started
+echo "Waiting up to $MAX_WAIT seconds for Heartbeat to start"
+retry $MAX_WAIT check_service_up $HEARTBEAT_URL || exit 1
+sleep 2 # give Heartbeat an extra moment to fully mature
+curl -s -f $HEARTBEAT_URL
+echo "Heartbeat has started!"
+
+echo "Changing to heartbeat directory"
+cd ./heartbeat
+echo "Importing Heartbeat dashboard!"
+curl -XPOST http://localhost:5601/api/saved_objects/_import?createNewCopies=true -H "kbn-xsrf: true" --form file=@http_dashboard.ndjson
