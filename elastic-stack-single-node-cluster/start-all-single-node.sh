@@ -29,17 +29,6 @@ function check_service_up() {
   return 1
 }
 
-function check_packetbeat_up() {
-  url=$1
-
-  FOUND=$(docker exec -it $(docker container ls | grep packetbeat-ctl-elk | awk '{print $1}') curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null $url)
-  # True if the strings are equal. "=" may be used instead of "==" for strict POSIX compliance.
-  if [ "HTTP 200" == "$FOUND" ]; then
-    return 0
-  fi
-  return 1
-}
-
 function retry() {
     local -r -i max_wait="$1"; shift
     local -r cmd="$@"
