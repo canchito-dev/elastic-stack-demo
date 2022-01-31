@@ -29,6 +29,17 @@ function check_service_up() {
   return 1
 }
 
+function check_packetbeat_up() {
+  url=$1
+
+  FOUND=$(docker exec -it $(docker container ls | grep packetbeat-demo | awk '{print $1}') curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null $url)
+  # True if the strings are equal. "=" may be used instead of "==" for strict POSIX compliance.
+  if [ "HTTP 200" == "$FOUND" ]; then
+    return 0
+  fi
+  return 1
+}
+
 function retry() {
     local -r -i max_wait="$1"; shift
     local -r cmd="$@"
@@ -65,6 +76,7 @@ LOGSTASH_URL=http://localhost:9600/?pretty
 FILEBEAT_TO_LOGSTASH_URL=http://localhost:5266/?pretty
 METRICBEAT_URL=http://localhost:5366/?pretty
 HEARTBEAT_URL=http://localhost:5466/?pretty
+PACKETBEAT_URL=http://localhost:5066/?pretty
 
 echo "Starting Kibana and Elasticsearch"
 docker-compose -f docker-compose-es-single-node.yml up -d --build
@@ -137,3 +149,16 @@ echo "Changing to heartbeat directory"
 cd ./heartbeat
 echo "Importing Heartbeat dashboard!"
 curl -XPOST http://localhost:5601/api/saved_objects/_import?createNewCopies=true -H "kbn-xsrf: true" --form file=@http_dashboard.ndjson
+
+echo "Changing to parent directory"
+cd ../
+
+echo "Starting Packetbeat"
+docker-compose -f docker-compose-packetbeat.yml up -d --build
+
+# Verify Packetbeat service has started
+echo "Waiting up to $MAX_WAIT seconds for Packetbeat to start"
+retry $MAX_WAIT check_packetbeat_up $PACKETBEAT_URL || exit 1
+sleep 2 # give Packetbeat an extra moment to fully mature
+curl -s -f $PACKETBEAT_URL
+echo "Packetbeat has started!"

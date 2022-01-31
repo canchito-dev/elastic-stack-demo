@@ -1,0 +1,18 @@
+version: '3.9'
+services:
+  packetbeat-demo:
+    hostname: packetbeat-demo
+    container_name: packetbeat-demo
+    build:
+      context: ./packetbeat
+      dockerfile: Dockerfile
+      args:
+        - ELK_VERSION=${ELK_VERSION}
+    ports:
+      - 5566:5066
+    user: packetbeat
+    cap_add:
+      - NET_ADMIN
+    # disable strict permission checks
+    command: [ '-e', '-v', '--strict.perms=false' ]
+    network_mode: host # Mandatory to monitor HOST filesystem, memory, processes,...
