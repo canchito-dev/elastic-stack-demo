@@ -16,3 +16,4 @@ enjoy it. The below image, is a representation of the final architecture.
 * [Getting Started with Logstash](http://www.canchito-dev.com/public/blog/2022/01/16/getting-started-with-logstash/)
 * [Collect Metrics with Metricbet](https://www.canchito-dev.com/public/blog/2022/01/25/collect-metrics-with-metricbet/)
 * [Know if your Service is Available with Heartbeat](https://www.canchito-dev.com/public/blog/2022/01/30/know-if-your-service-is-available-with-heartbeat/)
+* [Capturing the network traffic with Packetbeat](https://www.canchito-dev.com/public/blog/2022/01/31/capturing-the-network-traffic-with-packetbeat/)
