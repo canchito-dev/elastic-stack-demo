@@ -1,0 +1,41 @@
+version: '3.9'
+services:
+  auditbeat-demo:
+    hostname: auditbeat-demo
+    container_name: auditbeat-demo
+    build:
+      context: ./auditbeat
+      dockerfile: Dockerfile
+      args:
+        - ELK_VERSION=${ELK_VERSION}
+    ports:
+      - 5566:5066
+    # Need to override user so we can access the log files, and docker.sock
+    user: root
+    # https://www.elastic.co/guide/en/beats/auditbeat/current/running-on-docker.html#_special_requirements
+    # PID and CAP_ADD options are ignored as they are Not yet available in swarm mode at the moment.
+    # Eagerly waiting for Docker 19.06 release which will bring --privileged flag to Docker
+    # Swarm Mode https://github.com/moby/moby/issues/24862#issuecomment-451594187
+    # support for capabilities https://github.com/moby/moby/pull/38380
+    pid: host
+    cap_add:
+      - AUDIT_CONTROL
+      - AUDIT_READ
+    volumes:
+      - data_auditbeat_demo:/usr/share/auditbeat/data
+    # disable strict permission checks
+    command: [ '-e', '-v', '--strict.perms=false' ]
+    deploy:
+      mode: global
+    networks:
+      - elastic-stack-service-network
+
+# Networks to be created to facilitate communication between containers
+networks:
+  elastic-stack-service-network:
+    name: elastic-stack-service-network
+
+# Volumes
+volumes:
+  data_auditbeat_demo:
+    driver: local

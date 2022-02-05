@@ -77,6 +77,7 @@ FILEBEAT_TO_LOGSTASH_URL=http://localhost:5266/?pretty
 METRICBEAT_URL=http://localhost:5366/?pretty
 HEARTBEAT_URL=http://localhost:5466/?pretty
 PACKETBEAT_URL=http://localhost:5066/?pretty
+AUDITBEAT_URL=http://localhost:5566/?pretty
 
 echo "Starting Kibana and Elasticsearch"
 docker-compose -f docker-compose-es-single-node.yml up -d --build
@@ -152,6 +153,16 @@ curl -XPOST http://localhost:5601/api/saved_objects/_import?createNewCopies=true
 
 echo "Changing to parent directory"
 cd ../
+
+echo "Starting Auditbeat"
+docker-compose -f docker-compose-auditbeat.yml up -d --build
+
+# Verify Auditbeat service has started
+echo "Waiting up to $MAX_WAIT seconds for Auditbeat to start"
+retry $MAX_WAIT check_service_up $AUDITBEAT_URL || exit 1
+sleep 2 # give Auditbeat an extra moment to fully mature
+curl -s -f $AUDITBEAT_URL
+echo "Auditbeat has started!"
 
 echo "Starting Packetbeat"
 docker-compose -f docker-compose-packetbeat.yml up -d --build
